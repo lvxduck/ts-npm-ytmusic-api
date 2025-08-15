@@ -138,7 +138,9 @@ export default class YTMusic {
   private async constructRequest(
     endpoint: string,
     body: Record<string, any> = {},
-    query: Record<string, string> = {}
+    query: Record<string, string> = {},
+    clientName?: string,
+    clientVersion?: string
   ) {
     if (!this.config) {
       throw new Error(
@@ -174,8 +176,9 @@ export default class YTMusic {
         context: {
           capabilities: {},
           client: {
-            clientName: this.config.INNERTUBE_CLIENT_NAME,
-            clientVersion: this.config.INNERTUBE_CLIENT_VERSION,
+            clientName: clientName ?? this.config.INNERTUBE_CLIENT_NAME,
+            clientVersion:
+              clientVersion ?? this.config.INNERTUBE_CLIENT_VERSION,
             experimentIds: [],
             experimentsToken: "",
             gl: this.config.GL,
@@ -447,7 +450,13 @@ export default class YTMusic {
       "browseId"
     );
 
-    const lyricsData = await this.constructRequest("browse", { browseId });
+    const lyricsData = await this.constructRequest(
+      "browse",
+      { browseId },
+      undefined,
+      "ANDROID_MUSIC",
+      "8.05.50"
+    );
     const timedLyrics = traverseString(
       lyricsData,
       "contents",

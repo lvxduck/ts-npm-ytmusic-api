@@ -2059,7 +2059,7 @@ var YTMusic = class {
    * @param query Search params
    * @returns Raw response from YouTube Music API which needs to be parsed
    */
-  async constructRequest(endpoint, body = {}, query = {}) {
+  async constructRequest(endpoint, body = {}, query = {}, clientName, clientVersion) {
     if (!this.config) {
       throw new Error(
         "API not initialized. Make sure to call the initialize() method first"
@@ -2088,8 +2088,8 @@ var YTMusic = class {
         context: {
           capabilities: {},
           client: {
-            clientName: this.config.INNERTUBE_CLIENT_NAME,
-            clientVersion: this.config.INNERTUBE_CLIENT_VERSION,
+            clientName: clientName ?? this.config.INNERTUBE_CLIENT_NAME,
+            clientVersion: clientVersion ?? this.config.INNERTUBE_CLIENT_VERSION,
             experimentIds: [],
             experimentsToken: "",
             gl: this.config.GL,
@@ -2318,7 +2318,13 @@ var YTMusic = class {
       traverseList(data, "tabs", "tabRenderer")[1],
       "browseId"
     );
-    const lyricsData = await this.constructRequest("browse", { browseId });
+    const lyricsData = await this.constructRequest(
+      "browse",
+      { browseId },
+      void 0,
+      "ANDROID_MUSIC",
+      "8.05.50"
+    );
     const timedLyrics = traverseString(
       lyricsData,
       "contents",
